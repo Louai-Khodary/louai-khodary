@@ -1,56 +1,40 @@
-import React, { useState, useEffect } from "react";
-import Loading from "./Loading";
-import Tours from "./Tours";
-// ATTENTION!!!!!!!!!!
-// I SWITCHED TO PERMANENT DOMAIN
-const url = "https://course-api.com/react-tours-project";
+import React, { useState } from "react";
+import data from "./data";
 function App() {
-  const [loading, setLoading] = useState(true);
-  const [tours, setTours] = useState([]);
-
-  const removeTour = (id) => {
-    const newTour = tours.filter((tour) => tour.id !== id);
-    setTours(newTour);
-  };
-
-  const fetchTours = async () => {
-    setLoading(true);
-
-    try {
-      const response = await fetch(url);
-      const tours = await response.json();
-      setLoading(false);
-      setTours(tours);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState([]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let amount = parseInt(count);
+    if (count <= 0) {
+      amount = 1;
     }
-  };
+    if (count >= 8) {
+      amount = 8;
+    }
 
-  useEffect(() => {
-    fetchTours();
-  }, []);
-  if (loading) {
-    return (
-      <main>
-        <Loading />
-      </main>
-    );
-  }
-  if (tours.length === 0) {
-    return (
-      <div className="title">
-        <h2>no tours left</h2>
-        <button className="btn" onClick={() => fetchTours()}>
-          refresh
-        </button>
-      </div>
-    );
-  }
+    setText(data.slice(0, amount));
+  };
   return (
-    <main>
-      <Tours tours={tours} removeTour={removeTour} />
-    </main>
+    <section className="section-center">
+      <h3>tired of boring ipsum</h3>
+      <form className="lorem-form" onSubmit={handleSubmit}>
+        <label id="amount">Paragraphs : </label>
+        <input
+          type="number"
+          name="amount"
+          id="amount"
+          value={count}
+          onChange={(e) => setCount(e.target.value)}
+        />
+        <button className="btn">Genrate</button>
+      </form>
+      <article className="lorem-text">
+        {text.map((item, index) => {
+          return <p key={index}>{item}</p>;
+        })}
+      </article>
+    </section>
   );
 }
 
